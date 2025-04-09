@@ -62,9 +62,9 @@ cd ..
 npm start
 ```
 
-## Open your browser and navigate to http://localhost:3000.
+### Open your browser and navigate to http://localhost:3000.
 
-### Usage
+## Usage
 
 - Enter Starting Point: Type an address or click the location pin icon to use your current location.
 - Enter Destination: Type the address of your destination.
@@ -72,23 +72,23 @@ npm start
 - Find Route: Click the "Find Route" button to calculate and display your route.
 - View Directions: Scroll down to see turn-by-turn directions and estimated travel time.
 
-### API Integration
+## API Integration
 
-## OpenCage Geocoding API
+### OpenCage Geocoding API
 - Used for:
 - Converting addresses to coordinates
 - Reverse geocoding current location to address
-## OSRM (Open Source Routing Machine)
+### OSRM (Open Source Routing Machine)
 - Used for:
 - Calculating optimal routes between points
 - Generating turn-by-turn directions
 - Estimating travel times and distances
-## Google Maps Directions API (Backend)
+### Google Maps Directions API (Backend)
 - Used for:
 - Alternative routing provider
 - Saving route history to Firebase
 
-### Contributing
+## Contributing
 
 - Fork the repository
 - Create your feature branch (git checkout -b feature/amazing-feature)
@@ -96,9 +96,9 @@ npm start
 - Push to the branch (git push origin feature/amazing-feature)
 - Open a Pull Request
 
-### License
+## License
 
-## This project is licensed under the MIT License - see the LICENSE file for details.
+### This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
 
