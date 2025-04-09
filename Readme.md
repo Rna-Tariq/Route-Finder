@@ -41,13 +41,13 @@ cd backend
 npm install express axios cors dotenv firebase-admin
 ```
 
-## Create a .env file in the root directory with your API keys:
-REACT_APP_OPENCAGE_API_KEY=your_opencage_api_key
+### Create a .env file in the root directory with your API keys:
+### REACT_APP_OPENCAGE_API_KEY=your_opencage_api_key
 
-##Create a .env file in the backend directory:
-GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+### Create a .env file in the backend directory:
+### GOOGLE_MAPS_API_KEY=your_google_maps_api_key
 
-## Place your Firebase Admin SDK JSON file in the backend directory as firebase-adminsdk.json
+### Place your Firebase Admin SDK JSON file in the backend directory as firebase-adminsdk.json
 
 ## Start the backend server:
 
