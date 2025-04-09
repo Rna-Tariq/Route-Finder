@@ -1,4 +1,3 @@
-// src/services/geocoding.js
 import axios from 'axios';
 import { getDirection, formatDistance, formatDuration } from '../utils/formatters';
 
@@ -6,11 +5,9 @@ const OPENCAGE_API_KEY = process.env.REACT_APP_OPENCAGE_API_KEY;
 
 export const getCoordinates = async (location) => {
     try {
-        // Check if the input is already coordinates (from "Use my location" button)
         if (/^-?\d+\.?\d*,-?\d+\.?\d*$/.test(location)) {
             const [lat, lng] = location.split(',').map(coord => parseFloat(coord));
 
-            // Reverse geocode to get address
             const response = await axios.get(
                 'https://api.opencagedata.com/geocode/v1/json',
                 { params: { q: `${lat}+${lng}`, key: OPENCAGE_API_KEY } }
@@ -27,7 +24,6 @@ export const getCoordinates = async (location) => {
             };
         }
 
-        // Forward geocode address to coordinates
         const response = await axios.get(
             'https://api.opencagedata.com/geocode/v1/json',
             { params: { q: location, key: OPENCAGE_API_KEY } }
@@ -96,11 +92,9 @@ export const formatDirections = (routeData) => {
     const route = routeData.routes[0];
     const legs = route.legs;
 
-    // Calculate totals
     const totalDistance = route.distance || 0;
     const totalDuration = route.duration || 0;
 
-    // Process steps
     const processedSteps = [];
 
     legs.forEach((leg) => {
@@ -120,8 +114,6 @@ export const formatDirections = (routeData) => {
         steps: processedSteps,
         totalDistance,
         totalDuration,
-        geometry: route.geometry // For map rendering
+        geometry: route.geometry
     };
 };
-
-// src/services/routing.js
