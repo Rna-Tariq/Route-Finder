@@ -1,0 +1,38 @@
+{
+    "appTitle": "باحث الطرق",
+    "form": {
+        "startingPoint": "نقطة البداية",
+        "destination": "الوجهة",
+        "transportMode": "وسيلة النقل",
+        "useMyLocation": "استخدم موقعي",
+        "enterOrigin": "أدخل نقطة البداية (مثل: عنوان شارع، معلم)",
+        "enterDestination": "أدخل الوجهة (مثل: عنوان شارع، معلم)",
+        "findRoute": "ابحث عن الطريق",
+        "findingRoute": "جاري البحث..."
+    },
+    "transportModes": {
+        "walking": "مشي",
+        "driving": "قيادة",
+        "cycling": "ركوب الدراجة",
+        "bus": "حافلة"
+    },
+    "routeDetails": {
+        "tripSummary": "ملخص الرحلة",
+        "totalDistance": "المسافة الإجمالية",
+        "estimatedTime": "الوقت المقدر",
+        "from": "من",
+        "to": "إلى"
+    },
+    "directions": {
+        "turnByTurn": "الاتجاهات خطوة بخطوة",
+        "takesAbout": "يستغرق حوالي"
+    },
+    "language": {
+        "en": "English",
+        "ar": "العربية"
+    },
+    "errors": {
+        "geolocationNotSupported": "خدمة تحديد الموقع غير مدعومة في متصفحك",
+        "locationError": "خطأ في الحصول على الموقع"
+    }
+}

@@ -1,0 +1,38 @@
+{
+    "appTitle": "Route Finder",
+    "form": {
+        "startingPoint": "Starting Point",
+        "destination": "Destination",
+        "transportMode": "Transportation Mode",
+        "useMyLocation": "Use my location",
+        "enterOrigin": "Enter origin (e.g., street address, landmark)",
+        "enterDestination": "Enter destination (e.g., street address, landmark)",
+        "findRoute": "Find Route",
+        "findingRoute": "Finding Route..."
+    },
+    "transportModes": {
+        "walking": "Walking",
+        "driving": "Driving",
+        "cycling": "Cycling",
+        "bus": "Bus"
+    },
+    "routeDetails": {
+        "tripSummary": "Trip Summary",
+        "totalDistance": "Total Distance",
+        "estimatedTime": "Estimated Time",
+        "from": "From",
+        "to": "To"
+    },
+    "directions": {
+        "turnByTurn": "Directions",
+        "takesAbout": "Takes about"
+    },
+    "language": {
+        "en": "English",
+        "ar": "العربية"
+    },
+    "errors": {
+        "geolocationNotSupported": "Geolocation is not supported by your browser",
+        "locationError": "Error getting location"
+    }
+}
