@@ -9,6 +9,25 @@ body {
     background-color: #f5f5f5;
 }
 
+.rtl-layout {
+    direction: rtl;
+    text-align: right;
+}
+
+.ltr-layout {
+    direction: ltr;
+    text-align: left;
+}
+
+.rtl-layout .form-control {
+    padding-right: 0.75rem;
+    padding-left: 2rem;
+}
+
+.rtl-layout .form-label {
+    text-align: right;
+}
+
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
         monospace;
@@ -20,13 +39,11 @@ code {
     padding: 20px;
 }
 
-/* Leaflet marker styles */
 .leaflet-div-icon {
     background: transparent;
     border: none;
 }
 
-/* Animation for user location marker */
 @keyframes pulse {
     0% {
         transform: scale(0.95);
@@ -76,7 +93,6 @@ code {
     }
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .main-content {
         flex-direction: column;
