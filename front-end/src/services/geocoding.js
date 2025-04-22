@@ -73,6 +73,9 @@ export const createInstruction = (step) => {
         case 'roundabout':
             instruction = `At the roundabout, take the exit onto ${name}`;
             break;
+        case 'bus_stop':
+            instruction = `Stop at bus stop on ${name}`;
+            break;
         default:
             if (name !== 'Unnamed road') {
                 instruction = `Follow ${name}`;
@@ -81,7 +84,7 @@ export const createInstruction = (step) => {
             }
     }
 
-    if (distance > 0 && direction !== 'arrive') {
+    if (distance > 0 && direction !== 'arrive' && direction !== 'bus_stop') {
         instruction += ` for ${formatDistance(distance)}`;
     }
 
