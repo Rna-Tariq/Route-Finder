@@ -1,131 +1,134 @@
-import { useEffect, useState, useRef } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { MapContainer, TileLayer, Polyline, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { useSelector } from 'react-redux';
+import TransportMarker from './TransportMarker';
+
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+import markerIconRetina from 'leaflet/dist/images/marker-icon-2x.png';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-    iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+    iconRetinaUrl: markerIconRetina,
+    iconUrl: markerIcon,
+    shadowUrl: markerShadow
 });
 
 const MapView = () => {
-    const {
-        originCoords,
-        destinationCoords,
-        routeGeometry,
-        transportMode
-    } = useSelector(state => state.route);
+    const { originCoords, destinationCoords, routeGeometry, transportMode } = useSelector(state => state.route);
+    const [currentPosition, setCurrentPosition] = useState(null);
+    const [currentHeading, setCurrentHeading] = useState(0);
+    const [animationFrame, setAnimationFrame] = useState(null);
 
-    const [map, setMap] = useState(null);
-    const mapRef = useRef(null);
-    const mapContainerRef = useRef(null);
+    const mapCenter = routeGeometry?.coordinates?.[0]
+        ? [routeGeometry.coordinates[0][1], routeGeometry.coordinates[0][0]]
+        : originCoords ? [originCoords.lat, originCoords.lng]
+            : [51.505, -0.09];
+
+    const mapZoom = routeGeometry ? 13 : 15;
+
+    const routePath = routeGeometry?.coordinates
+        ? routeGeometry.coordinates.map(coord => [coord[1], coord[0]])
+        : [];
 
     useEffect(() => {
-        if (!mapRef.current && mapContainerRef.current) {
-            const instance = L.map(mapContainerRef.current).setView([30.0444, 31.2357], 13); // Default to Cairo
+        if (!routePath.length) return;
 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            }).addTo(instance);
-
-            mapRef.current = instance;
-            setMap(instance);
+        if (animationFrame) {
+            cancelAnimationFrame(animationFrame);
         }
 
-        return () => {
-            if (mapRef.current) {
-                mapRef.current.remove();
-                mapRef.current = null;
+        let step = 0;
+        const totalSteps = routePath.length;
+        const animationSpeed = transportMode === 'walking' ? 100 :
+            transportMode === 'cycling' ? 70 :
+                transportMode === 'bus' ? 50 : 30;
+
+        let lastTimestamp = 0;
+
+        const animate = (timestamp) => {
+            if (!lastTimestamp) lastTimestamp = timestamp;
+
+            const elapsed = timestamp - lastTimestamp;
+
+            if (elapsed > animationSpeed) {
+                if (step < totalSteps - 1) {
+                    setCurrentPosition(routePath[step]);
+
+                    if (step < totalSteps - 3) {
+                        const dx = routePath[step + 2][1] - routePath[step][1];
+                        const dy = routePath[step + 2][0] - routePath[step][0];
+                        setCurrentHeading(Math.atan2(dx, dy) * 180 / Math.PI);
+                    }
+
+                    step++;
+                    lastTimestamp = timestamp;
+                }
+            }
+
+            if (step < totalSteps - 1) {
+                const frame = requestAnimationFrame(animate);
+                setAnimationFrame(frame);
             }
         };
-    }, []);
 
-    useEffect(() => {
-        if (!map || !originCoords || !destinationCoords) return;
+        setCurrentPosition(routePath[0]);
+        const frame = requestAnimationFrame(animate);
+        setAnimationFrame(frame);
 
-        map.eachLayer((layer) => {
-            if (layer instanceof L.Marker || layer instanceof L.Polyline) {
-                map.removeLayer(layer);
+        return () => {
+            if (animationFrame) {
+                cancelAnimationFrame(animationFrame);
             }
-        });
-
-        const originMarker = L.marker([originCoords.lat, originCoords.lng])
-            .addTo(map)
-            .bindPopup('Origin')
-            .openPopup();
-
-        const destMarker = L.marker([destinationCoords.lat, destinationCoords.lng])
-            .addTo(map)
-            .bindPopup('Destination');
-
-        const bounds = L.latLngBounds([
-            [originCoords.lat, originCoords.lng],
-            [destinationCoords.lat, destinationCoords.lng]
-        ]);
-
-        if (routeGeometry && routeGeometry.coordinates) {
-            const coordinates = routeGeometry.coordinates.map(coord => [coord[1], coord[0]]);
-
-            let lineColor;
-            switch (transportMode) {
-                case 'walking':
-                    lineColor = '#1976d2'; // Blue
-                    break;
-                case 'cycling':
-                    lineColor = '#388e3c'; // Green
-                    break;
-                case 'driving':
-                    lineColor = '#d32f2f'; // Red
-                    break;
-                default:
-                    lineColor = '#000000';
-            }
-
-            const routeLine = L.polyline(coordinates, {
-                color: lineColor,
-                weight: 5,
-                opacity: 0.7
-            }).addTo(map);
-
-            routeLine.getLatLngs().forEach(point => {
-                bounds.extend([point.lat, point.lng]);
-            });
-        }
-
-        map.fitBounds(bounds, { padding: [50, 50] });
-
-    }, [map, originCoords, destinationCoords, routeGeometry, transportMode]);
-
-    if (!originCoords || !destinationCoords) {
-        return (
-            <div
-                style={{
-                    height: '400px',
-                    backgroundColor: '#e5e5e5',
-                    borderRadius: '4px',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    fontSize: '16px',
-                    color: '#666'
-                }}
-            >
-                Enter origin and destination to see the map
-            </div>
-        );
-    }
+        };
+    }, [routePath, transportMode]);
 
     return (
-        <div
-            ref={mapContainerRef}
-            style={{
-                height: '400px',
-                borderRadius: '4px',
-                marginBottom: '20px'
-            }}
-        />
+        <MapContainer
+            center={mapCenter}
+            zoom={mapZoom}
+            style={{ height: '400px', width: '100%' }}
+        >
+            <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+
+            {originCoords && (
+                <Marker position={[originCoords.lat, originCoords.lng]}>
+                    <Popup>Starting Point: {originCoords.formatted}</Popup>
+                </Marker>
+            )}
+
+            {destinationCoords && (
+                <Marker position={[destinationCoords.lat, destinationCoords.lng]}>
+                    <Popup>Destination: {destinationCoords.formatted}</Popup>
+                </Marker>
+            )}
+
+            {routePath.length > 0 && (
+                <Polyline
+                    positions={routePath}
+                    color={
+                        transportMode === 'walking' ? 'green' :
+                            transportMode === 'cycling' ? 'blue' :
+                                transportMode === 'bus' ? 'purple' : 'red'
+                    }
+                    weight={5}
+                    opacity={0.7}
+                />
+            )}
+
+            {currentPosition && (
+                <TransportMarker
+                    position={currentPosition}
+                    transportMode={transportMode}
+                    heading={currentHeading}
+                />
+            )}
+        </MapContainer>
     );
 };
 
